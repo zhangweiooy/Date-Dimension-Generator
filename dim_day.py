@@ -1,6 +1,6 @@
 import pandas as pd
 from lunar import Lunar
-from chinese_calendar import is_holiday, is_workday, get_holiday_detail
+from chinese_calendar import is_workday, get_holiday_detail
 
 
 def getVacation(dateIds):
@@ -53,10 +53,14 @@ def generateData(startDate="2019-1-01", endDate="2019-1-31"):
     )
     data["holiday_flag"] = data["id"].apply(
         lambda x: "Non-holiday" if is_workday(x) else "Holiday"
-    )
+    )# 休息日
     data["legal_holiday_flag"] = data["id"].apply(
         lambda x: get_holiday_detail(x)[0] is True and get_holiday_detail(x)[1] is not None
-    )
+    )# 法定节假日
+    data["legal_workday_flag"] = data["id"].apply(
+        lambda x: is_workday(x) is True and get_holiday_detail(x)[1] is not None
+    )# 法定节假日调休
+
     data["vacation_flag"] = getVacation(data["id"])
     return data
 
